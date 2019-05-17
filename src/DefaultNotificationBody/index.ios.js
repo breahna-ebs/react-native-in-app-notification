@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, StatusBar, View, Text, Image, Vibration } from 'react-native';
+import { TouchableOpacity, View, Text, Image, Vibration } from 'react-native';
 import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 
@@ -65,11 +65,7 @@ class DefaultNotificationBody extends React.Component {
     this.onSwipe = this.onSwipe.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.isOpen !== prevProps.isOpen) {
-      StatusBar.setHidden(this.props.isOpen);
-    }
-
+  componentDidUpdate(prevProps) {    
     if ((prevProps.vibrate || this.props.vibrate) && this.props.isOpen && !prevProps.isOpen) {
       Vibration.vibrate();
     }
