@@ -25,6 +25,7 @@ class Notification extends Component {
     this.state = {
       animatedValue: new Animated.Value(0),
       isOpen: false,
+      fadeAnim: new Animated.Value(0),
     };
   }
 
@@ -82,17 +83,29 @@ class Notification extends Component {
   }
 
   showNotification(done) {
-    Animated.timing(this.state.animatedValue, {
-      toValue: 1,
-      duration: this.props.openCloseDuration,
-    }).start(done);
+    Animated.parallel([
+      Animated.timing(this.state.animatedValue, {
+        toValue: 1,
+        duration: this.props.openCloseDuration,
+      }),
+      Animated.timing(this.state.fadeAnim, {
+        toValue: 1,
+        duration: this.props.openCloseDuration,
+      })
+    ]).start(done);
   }
 
   closeNotification(done) {
-    Animated.timing(this.state.animatedValue, {
-      toValue: 0,
-      duration: this.props.openCloseDuration,
-    }).start(done);
+    Animated.parallel([
+      Animated.timing(this.state.animatedValue, {
+        toValue: 0,
+        duration: this.props.openCloseDuration,
+      }),
+      Animated.timing(this.state.fadeAnim, {
+        toValue: 0,
+        duration: this.props.openCloseDuration,
+      })
+    ]).start(done);
   }
 
   render() {
@@ -104,7 +117,7 @@ class Notification extends Component {
       notificationBodyComponent: NotificationBody,
     } = this.props;
 
-    const { animatedValue, title, message, onPress, isOpen, icon, vibrate } = this.state;
+    const { animatedValue, fadeAnim, title, message, onPress, isOpen, icon, vibrate } = this.state;
 
     const height = baseHeight + this.heightOffset;
 
@@ -112,7 +125,11 @@ class Notification extends Component {
       <Animated.View
         style={[
           styles.notification,
-          { height, backgroundColor: backgroundColour },
+          {
+            height,
+            backgroundColor: backgroundColour,
+            opacity: fadeAnim,
+          },
           {
             transform: [
               {
@@ -135,6 +152,7 @@ class Notification extends Component {
           vibrate={vibrate}
           onClose={() => this.setState({ isOpen: false }, this.closeNotification)}
         />
+
       </Animated.View>
     );
   }
